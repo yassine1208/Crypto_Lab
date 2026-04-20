@@ -1,0 +1,493 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Crypto Toolbox</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
+    <style>
+        /* CSS resets and variables */
+        :root {
+            --bg-color: #0b0f19;
+            --card-bg: rgba(20, 25, 40, 0.65);
+            --border-color: rgba(255, 255, 255, 0.08);
+            --primary: #6366f1;
+            --primary-hover: #4f46e5;
+            --text-main: #f9fafb;
+            --text-muted: #9ca3af;
+            --success: #10b981;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            position: relative;
+        }
+
+        /* Animated Background Elements */
+        .bg-circle-1, .bg-circle-2 {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(120px);
+            z-index: 0;
+            animation: float 20s infinite alternate cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .bg-circle-1 {
+            width: 450px;
+            height: 450px;
+            background: rgba(99, 102, 241, 0.25);
+            top: 5%;
+            left: 15%;
+        }
+
+        .bg-circle-2 {
+            width: 550px;
+            height: 550px;
+            background: rgba(139, 92, 246, 0.15);
+            bottom: -5%;
+            right: 10%;
+            animation-delay: -10s;
+        }
+
+        @keyframes float {
+            0% { transform: translateY(0) translateX(0); }
+            100% { transform: translateY(80px) translateX(80px); }
+        }
+
+        /* Main App Container */
+        .app-container {
+            position: relative;
+            z-index: 10;
+            width: 100%;
+            max-width: 550px;
+            background: var(--card-bg);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid var(--border-color);
+            border-radius: 24px;
+            padding: 40px;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.6);
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 35px;
+        }
+
+        h1 {
+            margin: 0;
+            font-weight: 600;
+            font-size: 32px;
+            letter-spacing: -0.5px;
+            background: linear-gradient(135deg, #a5b4fc, #e0e7ff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        p.subtitle {
+            margin: 8px 0 0;
+            color: var(--text-muted);
+            font-size: 15px;
+        }
+
+        /* Tabs */
+        .tabs {
+            display: flex;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 12px;
+            padding: 5px;
+            margin-bottom: 28px;
+        }
+        
+        .tab {
+            flex: 1;
+            padding: 12px 0;
+            text-align: center;
+            cursor: pointer;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--text-muted);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .tab.active {
+            background: rgba(255, 255, 255, 0.1);
+            color: var(--text-main);
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        }
+
+        .tab:hover:not(.active) {
+            color: var(--text-main);
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        /* Content areas */
+        .tab-content {
+            display: none;
+            animation: fadeIn 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(8px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Forms */
+        .input-group {
+            margin-bottom: 24px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 10px;
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--text-muted);
+        }
+
+        textarea, input[type="text"] {
+            width: 100%;
+            box-sizing: border-box;
+            background: rgba(0, 0, 0, 0.25);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 16px;
+            color: var(--text-main);
+            font-family: inherit;
+            font-size: 15px;
+            line-height: 1.5;
+            resize: none;
+            transition: all 0.2s ease;
+        }
+
+        textarea:focus, input[type="text"]:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.25);
+            background: rgba(0, 0, 0, 0.4);
+        }
+
+        textarea::placeholder, input[type="text"]::placeholder {
+            color: rgba(156, 163, 175, 0.4);
+        }
+
+        button.action-btn {
+            width: 100%;
+            background: linear-gradient(135deg, var(--primary), var(--primary-hover));
+            color: white;
+            border: none;
+            border-radius: 12px;
+            padding: 15px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            box-shadow: 0 4px 12px rgba(79, 70, 229, 0.3);
+        }
+
+        button.action-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(79, 70, 229, 0.4);
+        }
+
+        button.action-btn:active {
+            transform: translateY(0);
+        }
+
+        /* Result Area */
+        .result-area {
+            margin-top: 28px;
+            padding: 20px;
+            background: rgba(16, 185, 129, 0.08);
+            border: 1px solid rgba(16, 185, 129, 0.2);
+            border-radius: 12px;
+            display: none;
+            position: relative;
+            backdrop-filter: blur(10px);
+        }
+
+        .result-area.visible {
+            display: block;
+            animation: fadeIn 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .result-label {
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--success);
+            margin-bottom: 12px;
+            font-weight: 600;
+        }
+
+        .result-value {
+            font-family: 'Consolas', 'Monaco', monospace;
+            word-break: break-all;
+            background: rgba(0,0,0,0.3);
+            padding: 16px;
+            border-radius: 8px;
+            margin: 0;
+            font-size: 14px;
+            color: #d1d5db;
+            line-height: 1.5;
+        }
+
+        .copy-btn {
+            position: absolute;
+            top: 16px;
+            right: 16px;
+            background: rgba(16, 185, 129, 0.1);
+            border: 1px solid var(--success);
+            color: var(--success);
+            border-radius: 6px;
+            padding: 6px 12px;
+            font-size: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .copy-btn:hover {
+            background: var(--success);
+            color: #fff;
+        }
+        
+        .loading-icon {
+            animation: spin 1s linear infinite;
+            display: none;
+        }
+        
+        @keyframes spin {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="bg-circle-1"></div>
+    <div class="bg-circle-2"></div>
+
+    <div class="app-container">
+        <div class="header">
+            <h1>Crypto Toolbox</h1>
+            <p class="subtitle">AES-128 ECB Encryption & SHA-256 Hashing</p>
+        </div>
+
+        <div class="tabs">
+            <div class="tab active" onclick="switchTab('encrypt')">Encrypt</div>
+            <div class="tab" onclick="switchTab('decrypt')">Decrypt</div>
+            <div class="tab" onclick="switchTab('hash')">Hash</div>
+        </div>
+
+        <!-- Encrypt Tab -->
+        <div id="tab-encrypt" class="tab-content active">
+            <div class="input-group">
+                <label for="enc-key">Encryption Key</label>
+                <input type="text" id="enc-key" placeholder="Enter encryption key...">
+            </div>
+            <div class="input-group">
+                <label for="enc-input">Plain Text</label>
+                <textarea id="enc-input" rows="4" placeholder="Enter text to encrypt..."></textarea>
+            </div>
+            <button class="action-btn" onclick="handleAction('enc')">
+                <svg class="btn-icon" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path></svg>
+                <svg class="loading-icon" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
+                <span>Encrypt Data</span>
+            </button>
+        </div>
+
+        <!-- Decrypt Tab -->
+        <div id="tab-decrypt" class="tab-content">
+            <div class="input-group">
+                <label for="dec-key">Decryption Key</label>
+                <input type="text" id="dec-key" placeholder="Enter decryption key...">
+            </div>
+            <div class="input-group">
+                <label for="dec-input">Cipher Text (Base64)</label>
+                <textarea id="dec-input" rows="4" placeholder="Enter Base64 encoded cipher text..."></textarea>
+            </div>
+            <button class="action-btn" onclick="handleAction('dec')">
+                <svg class="btn-icon" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M8 11V7a4 4 0 118 0m-4 8v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2z"></path></svg>
+                <svg class="loading-icon" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
+                <span>Decrypt Data</span>
+            </button>
+        </div>
+
+        <!-- Hash Tab -->
+        <div id="tab-hash" class="tab-content">
+            <div class="input-group">
+                <label for="hash-input">Plain Text</label>
+                <textarea id="hash-input" rows="4" placeholder="Enter text to hash using SHA-256..."></textarea>
+            </div>
+            <button class="action-btn" onclick="handleAction('hash')">
+                <svg class="btn-icon" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M7 20l4-16m2 16l4-16M6 9h14M4 15h14"></path></svg>
+                <svg class="loading-icon" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
+                <span>Generate Hash</span>
+            </button>
+        </div>
+
+        <div id="result-container" class="result-area">
+            <div class="result-label" id="result-label">Result</div>
+            <p id="result-value" class="result-value"></p>
+            <button class="copy-btn" onclick="copyResult()">Copy</button>
+        </div>
+
+    </div>
+
+    <script>
+        function switchTab(tabName) {
+            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+            document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+            
+            event.target.classList.add('active');
+            document.getElementById('tab-' + tabName).classList.add('active');
+            hideResult();
+        }
+
+        function showResult(label, value, isError = false) {
+            const container = document.getElementById('result-container');
+            const labelEl = document.getElementById('result-label');
+            const copyBtn = document.querySelector('.copy-btn');
+            
+            document.getElementById('result-label').innerText = label;
+            document.getElementById('result-value').innerText = value;
+            
+            if (isError) {
+                container.style.borderColor = 'rgba(239, 68, 68, 0.3)';
+                container.style.background = 'rgba(239, 68, 68, 0.1)';
+                labelEl.style.color = '#ef4444';
+                copyBtn.style.display = 'none';
+            } else {
+                container.style.borderColor = 'rgba(16, 185, 129, 0.2)';
+                container.style.background = 'rgba(16, 185, 129, 0.1)';
+                labelEl.style.color = 'var(--success)';
+                copyBtn.style.display = 'block';
+                
+                // Also reset standard colors for the button
+                copyBtn.style.borderColor = 'var(--success)';
+                copyBtn.style.color = 'var(--success)';
+                copyBtn.innerText = 'Copy';
+            }
+            
+            container.classList.add('visible');
+        }
+
+        function hideResult() {
+            document.getElementById('result-container').classList.remove('visible');
+        }
+
+        function copyResult() {
+            const text = document.getElementById('result-value').innerText;
+            navigator.clipboard.writeText(text);
+            const btn = document.querySelector('.copy-btn');
+            btn.innerText = 'Copied!';
+            setTimeout(() => { btn.innerText = 'Copy'; }, 2000);
+        }
+        
+        function toggleLoading(tabId, isLoading) {
+            const tab = document.getElementById(tabId);
+            const btn = tab.querySelector('.action-btn');
+            const icon = btn.querySelector('.btn-icon');
+            const loader = btn.querySelector('.loading-icon');
+            const text = btn.querySelector('span');
+            
+            if (isLoading) {
+                btn.style.opacity = '0.7';
+                btn.style.cursor = 'not-allowed';
+                icon.style.display = 'none';
+                loader.style.display = 'block';
+                btn.disabled = true;
+            } else {
+                btn.style.opacity = '1';
+                btn.style.cursor = 'pointer';
+                icon.style.display = 'block';
+                loader.style.display = 'none';
+                btn.disabled = false;
+            }
+        }
+
+        async function handleAction(type) {
+            hideResult();
+            
+            const tabId = 'tab-' + (type === 'enc' ? 'encrypt' : type === 'dec' ? 'decrypt' : 'hash');
+            const inputId = type === 'enc' ? 'enc-input' : type === 'dec' ? 'dec-input' : 'hash-input';
+            const text = document.getElementById(inputId).value;
+            
+            let key = "";
+            if (type === 'enc') {
+                key = document.getElementById('enc-key').value;
+                if (!key) {
+                    showResult('Error', 'An encryption key is required.', true);
+                    return;
+                }
+            } else if (type === 'dec') {
+                key = document.getElementById('dec-key').value;
+                if (!key) {
+                    showResult('Error', 'A decryption key is required.', true);
+                    return;
+                }
+            }
+            
+            if (!text) return;
+            
+            toggleLoading(tabId, true);
+            
+            try {
+                let res;
+                if (type === 'enc') {
+                    res = await fetch('/crypt', {
+                        method: 'POST',
+                        headers: {'Content-Type': 'application/json'},
+                        body: JSON.stringify({text: text, key: key})
+                    });
+                    if(!res.ok) throw new Error("Encryption failed at server.");
+                    const data = await res.json();
+                    if(data.error) throw new Error(data.error);
+                    showResult('Encrypted Text (Base64)', data.encrypted);
+                } 
+                else if (type === 'dec') {
+                    res = await fetch('/decrypt?cipherText=' + encodeURIComponent(text) + '&key=' + encodeURIComponent(key));
+                    if(!res.ok) throw new Error("Incorrect padding or corrupted data.");
+                    const data = await res.json();
+                    if(data.error) throw new Error(data.error);
+                    showResult('Decrypted Text', data.decrypted);
+                } 
+                else if (type === 'hash') {
+                    res = await fetch('/hash', {
+                        method: 'POST',
+                        headers: {'Content-Type': 'application/json'},
+                        body: JSON.stringify({text: text})
+                    });
+                    if(!res.ok) throw new Error("Hashing failed at server.");
+                    const data = await res.json();
+                    if(data.error) throw new Error(data.error);
+                    showResult('SHA-256 Hash', data.hash);
+                }
+            } catch (err) {
+                showResult('Error', err.message || 'An unexpected error occurred.', true);
+            } finally {
+                toggleLoading(tabId, false);
+            }
+        }
+    </script>
+</body>
+</html>
